@@ -39,9 +39,9 @@ public interface Functions {
     void viewOrder(int orderId);
 
     /** 实现对收获地址的管理，通过输入选项，按选项来对地址增删改
-     * @param choice 作为选项的参数传入，用来判断接下来进行的操作
+     * @param
      */
-    void manageAddress(int choice);
+    int manageAddress();
 
     /** 实现对账户中的余额进行充值，使用SQL语句对用户信息中的money字段做修改
      * @param recharge 作为修改的资金数值传入
