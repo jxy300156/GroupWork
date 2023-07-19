@@ -20,10 +20,9 @@ public interface Functions {
     List<Product> shoppingMethod();
 
     /**输入一个购物车的编号id和一个选项对购物车进行增删改操作
-     * @param cartId 作为需要被进行操作的购物车的id传入
-     * @param choice 作为操作的选项传入
+     * @param cart 作为需要被进行操作的购物车传入
      */
-    void cartOperations(Integer cartId, int choice);
+    void cartOperations(List<Product> cart);
 
 
     /**通过传入一个Product的集合作为购物车，实现对购物车的结算
