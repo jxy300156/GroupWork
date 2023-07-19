@@ -171,8 +171,9 @@ public class FunctionsImpl implements Functions {
     public int manageAddress() {
         AddressDaoImpl addressDao = new AddressDaoImpl();
         LinkedList<Address> addressList = (LinkedList<Address>) addressDao.listAll();
+
         Scanner sc = new Scanner(System.in);
-        System.out.print("请选择地址ID:");
+        System.out.print("请选择地址ID: ");
         String choose = sc.nextLine();
         int res = Integer.parseInt(choose);
         for (Address a: addressList) {
