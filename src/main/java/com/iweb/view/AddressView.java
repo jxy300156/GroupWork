@@ -25,12 +25,12 @@ public class AddressView {
      */
     public int manageAddress() {
         Scanner sc = new Scanner(System.in);
-        System.out.print("请选择地址ID:");
+        System.out.print("请选择地址ID: ");
         String choose = sc.nextLine();
         int res = Integer.parseInt(choose);
         for (Address a: addressList) {
             if(a.getAddrId()==res){
-                System.out.println("获取成功");
+                System.out.println("获取成功 ");
                 return res;
             }
         }
