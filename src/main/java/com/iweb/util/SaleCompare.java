@@ -26,10 +26,11 @@ public class SaleCompare implements Comparator<Product> {
         return Integer.compare(sale1,sale2);
     }
     private int getSaleCount(Product product){
+        Connection connection = connectionPool.getConnection();
         int sales = 0;
         String sql = "SELECT COUNT(*) FROM order_detail WHERE pid = ?";
-        try(Connection connection = connectionPool.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)){
+        try{
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1,product.getPid());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
@@ -39,6 +40,8 @@ public class SaleCompare implements Comparator<Product> {
             ps.close();
         }catch (Exception e){
 
+        }finally {
+            connectionPool.returnConnection(connection);
         }
         return sales;
     }

@@ -79,7 +79,7 @@ public class FunctionsImpl implements Functions {
         int pageSize = 4;
 
         List<Product> products = getProducts();
-        products.sort(comparator);
+        Collections.sort(products,comparator);
         int totalPage = (int) Math.ceil((double) products.size() / pageSize);
         for(int i =0;i<totalPage;i++){
             int begin = i*pageSize;
@@ -122,9 +122,17 @@ public class FunctionsImpl implements Functions {
     private void addToCart(List<Product> cart,List<Product> products){
         System.out.println("请输入你想添加的商品");
         Scanner sc = new Scanner(System.in);
-        int prodIndex = sc.nextInt();
-        Product product = products.get(prodIndex);
-        cart.add(product);
+        if (sc.hasNextInt()) {
+            int prodIndex = sc.nextInt();
+            if (prodIndex >= 0 && prodIndex < products.size()) {
+                Product product = products.get(prodIndex);
+                cart.add(product);
+            } else {
+                System.out.println("无效的索引！");
+            }
+        } else {
+            System.out.println("无效的输入！");
+        }
     }
     @Override
     public void cartOperations(List<Product> cart) {
@@ -156,12 +164,21 @@ public class FunctionsImpl implements Functions {
         }
     }
     private void removeProduct(List<Product> cart,int prodIndex){
-        Product product = cart.get(prodIndex);
-        cart.remove(product);
+        if (prodIndex >= 0 && prodIndex < cart.size()) {
+            cart.remove(prodIndex);
+            System.out.println("商品已成功移除");
+        } else {
+            System.out.println("无效的索引！");
+        }
     }
     private void displayCart(List<Product> cart){
-        for(Product product:cart){
-            System.out.println(product.getPid()+"--"+product.getPName()+"--"+product.getPromotePrice());
+        if (cart.isEmpty()) {
+            System.out.println("购物车为空");
+        } else {
+            System.out.println("购物车内容：");
+            for (Product product : cart) {
+                System.out.println(product.getPid() + "--" + product.getPName() + "--" + product.getPromotePrice());
+            }
         }
     }
     @Override
@@ -172,6 +189,52 @@ public class FunctionsImpl implements Functions {
 
     @Override
     public void viewOrder(int orderId) {
+        //.订单查看和订单关联的订单项数据显示,包括了 购买的商品名称 购买的商品数量 以及单价和总价
+        String sql =
+                "SELECT o.`order_id` AS order_id, u.username, a.province_addr, a.city_addr, a.detail_addr, \n" +
+                        "       p.name AS product_name, od.quantity, p.promoteprice AS unit_price, \n" +
+                        "       (od.quantity * p.promoteprice) AS total_price\n" +
+                        "FROM `order` o\n" +
+                        "JOIN order_detail od ON o.`order_id` = od.oid\n" +
+                        "JOIN product p ON od.pid = p.id\n" +
+                        "JOIN address a ON o.`user_id` = a.`uid`\n" +
+                        "JOIN (\n" +
+                        "  SELECT id, username\n" +
+                        "  FROM `user`\n" +
+                        ") u ON o.`user_id` = u.id\n" +
+                        "WHERE o.id =?";
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+        ) {
+            //在是第一个？处加入传入的参数orderId 根据订单编号查询指定订单的相关信息
+            ps.setInt(1, orderId);
+            //获取查询结果
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int oid = rs.getInt("order_id");
+                String username = rs.getString("username");
+                String provinceAddr = rs.getString("province_addr");
+                String cityAddr = rs.getString("city_addr");
+                String detailAddr = rs.getString("detail_addr");
+                String productName = rs.getString("product_name");
+                int quantity = rs.getInt("quantity");
+                double unitPrice = rs.getDouble("unit_price");
+                double totalPrice = rs.getDouble("total_price");
+
+                // 输出订单项的相关信息
+                System.out.print("订单编号: " + oid+"  |"+"\t");
+                System.out.print("用户名: " + username+"   |"+"\t");
+                System.out.print("用户地址: " + provinceAddr+cityAddr+ detailAddr+" |"+"\t");
+                System.out.print("商品名称: " + productName+"   |"+"\t");
+                System.out.print("购买数量: " + quantity+"  |"+"\t");
+                System.out.print("单价: " + unitPrice+"   |"+"\t");
+                System.out.print("总价: " + totalPrice+"  |"+"\n");
+                System.out.println("-----------------------------------------------------------------------------------------------------------------");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
     @Override

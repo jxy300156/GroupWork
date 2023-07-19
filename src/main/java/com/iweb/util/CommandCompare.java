@@ -25,10 +25,11 @@ public class CommandCompare implements Comparator<Product> {
         return Integer.compare(stockCount1,stockCount2);
     }
     private int getStockCount(Product product){
+        Connection connection = connectionPool.getConnection();
         int stocks = 0;
         String sql = "SELECT stock FROM product WHERE id = ?";
-        try(Connection connection = connectionPool.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)){
+        try{
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1,product.getPid());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
@@ -38,6 +39,8 @@ public class CommandCompare implements Comparator<Product> {
             ps.close();
         }catch (Exception e){
 
+        }finally {
+            connectionPool.returnConnection(connection);
         }
         return stocks;
     }

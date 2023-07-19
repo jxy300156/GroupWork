@@ -25,10 +25,11 @@ public class ReviewCompare implements Comparator<Product> {
         return Integer.compare(reviewQuantity1,reviewQuantity2);
     }
     private int getReviewQuantity(Product product){
+        Connection connection = connectionPool.getConnection();
         int quantity = 0;
         String sql = "SELECT avg(rating) FROM review WHERE pid = ?";
-        try(Connection connection = connectionPool.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)){
+        try{
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1,product.getPid());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
@@ -38,6 +39,8 @@ public class ReviewCompare implements Comparator<Product> {
             ps.close();
         }catch (Exception e){
 
+        }finally {
+            connectionPool.returnConnection(connection);
         }
         return quantity;
     }
