@@ -2,6 +2,7 @@ package com.iweb.Inter;
 
 import com.iweb.pojo.Order;
 import com.iweb.pojo.Product;
+import com.iweb.pojo.User;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public interface Functions {
     /** 实现对账户中的余额进行充值，使用SQL语句对用户信息中的money字段做修改
      * @param recharge 作为修改的资金数值传入
      */
-    void investMoney(int recharge);
+    void investMoney(User user, double recharge);
 
     /** 使用BIO和socket编程 实现与智能客服通信 方法实现中选择调用两个方法
      * 一个实现服务器端的ServerSocket通信，另一个实现客户端的Socket通信

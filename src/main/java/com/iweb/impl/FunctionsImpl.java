@@ -309,8 +309,19 @@ public class FunctionsImpl implements Functions {
     }
 
     @Override
-    public void investMoney(int recharge) {
-
+    public void investMoney(User user, double recharge) {
+        String sql = "update user set money=? where username=?";
+        Connection c = connectionPool.getConnection();
+        try {
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setDouble(1, user.getMoney() + recharge);
+            ps.setString(2, user.getUserName());
+            ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            connectionPool.returnConnection(c);
+        }
     }
 
     @Override
