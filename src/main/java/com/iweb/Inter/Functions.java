@@ -29,7 +29,7 @@ public interface Functions {
      * @param cart 作为一个Product类型的集合传入，
      * @return
      */
-    List<Order> cartSettlement(List<Product> cart);
+    Order cartSettlement(List<Product> cart);
 
     /** 实现输入订单编号对订单信息进行查看，详细显示订单的各项数据
      *  如果未找到数据则输出“订单信息不存在”

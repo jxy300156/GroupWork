@@ -5,12 +5,14 @@ import com.iweb.dao.AddressDaoImpl;
 import com.iweb.pojo.Address;
 import com.iweb.pojo.Order;
 import com.iweb.pojo.Product;
+import com.iweb.pojo.User;
 import com.iweb.pool.ConnectionPool;
 import com.iweb.util.CommandCompare;
 import com.iweb.util.ReviewCompare;
 import com.iweb.util.SaleCompare;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
@@ -163,8 +165,9 @@ public class FunctionsImpl implements Functions {
         }
     }
     @Override
-    public List<Order> cartSettlement(List<Product> cart) {
+    public Order cartSettlement(List<Product> cart) {
         return null;
+
     }
 
     @Override
@@ -175,7 +178,6 @@ public class FunctionsImpl implements Functions {
     public int manageAddress() {
         AddressDaoImpl addressDao = new AddressDaoImpl();
         LinkedList<Address> addressList = (LinkedList<Address>) addressDao.listAll();
-
         Scanner sc = new Scanner(System.in);
         System.out.print("请选择地址ID: ");
         String choose = sc.nextLine();
@@ -188,6 +190,59 @@ public class FunctionsImpl implements Functions {
         }
         System.out.println("获取失败");
         return manageAddress();
+    }
+
+    public void shopCart(User user,List<Product> pd,int addressId)
+    {
+        Double money = 0.00;
+        //根据传进来的购物车集合获得所有的价格
+        for (int i = 0; i <pd.size() ; i++) {
+            money=money+pd.get(i).getPromotePrice();
+        }
+        Double SurplusMoney =user.getMoney()-money;
+        //判断用户余额是否够用，不够用回到选购物车阶段
+        //够用，根据用户id修改用户余额，再生成一个order订单
+        if (SurplusMoney<0)
+        {
+            System.out.println("你的余额不足");
+            //用户登录成功界面
+            return ;
+        }
+        else {
+            user.setMoney(SurplusMoney);
+            String sql = "update user money=? where id = ?";
+            try (
+                    Connection c = connectionPool.getConnection();
+                    PreparedStatement ps = c.prepareStatement(sql)
+            ) {
+                ps.setDouble(1, user.getMoney());
+                ps.setInt(2, user.getUid());
+                ps.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("购物完成");
+            //清空购物车
+            //用户生成生成一个以manageAddress选择的地址id为order订单里的addressId,User的id为user_id,系统当前时间为order_data
+            // ,固定"待发货"为order_value的order订单
+            Date date = new Date(System.currentTimeMillis());
+            String orderValue = "待发货";
+            String str1 = "insert into `order`(user_id,address_id,order_data,order_status) value(?,?,?,?)";
+            try (Connection c = connectionPool.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setInt(1, user.getUid());
+                ps.setInt(2, addressId);
+                ps.setDate(3, date);
+                ps.setString(4, orderValue);
+                ps.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
     }
 
     @Override
