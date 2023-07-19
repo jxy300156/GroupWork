@@ -33,8 +33,7 @@ public class ConnectionPool  {
         }
     }
     private static Connection createConnection() throws Exception{
-        File f = new File("D:\\idea_work_space\\PersonalProject\\src\\" +
-                "main\\java\\com\\iweb\\config.properties");
+        File f = new File("src/main/java/com/iweb/config.properties");
         Properties config = new Properties();
         config.load(new FileInputStream(f));
         String url = (String) config.get("url");

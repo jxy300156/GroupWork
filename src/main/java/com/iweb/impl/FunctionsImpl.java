@@ -1,6 +1,8 @@
 package com.iweb.impl;
 
 import com.iweb.Inter.Functions;
+import com.iweb.dao.AddressDaoImpl;
+import com.iweb.pojo.Address;
 import com.iweb.pojo.Order;
 import com.iweb.pojo.Product;
 import com.iweb.pool.ConnectionPool;
@@ -169,10 +171,22 @@ public class FunctionsImpl implements Functions {
     public void viewOrder(int orderId) {
 
     }
-
     @Override
-    public void manageAddress(int choice) {
-
+    public int manageAddress() {
+        AddressDaoImpl addressDao = new AddressDaoImpl();
+        LinkedList<Address> addressList = (LinkedList<Address>) addressDao.listAll();
+        Scanner sc = new Scanner(System.in);
+        System.out.print("请选择地址ID:");
+        String choose = sc.nextLine();
+        int res = Integer.parseInt(choose);
+        for (Address a: addressList) {
+            if(a.getAddrId()==res){
+                System.out.println("获取成功");
+                return res;
+            }
+        }
+        System.out.println("获取失败");
+        return manageAddress();
     }
 
     @Override
