@@ -273,7 +273,7 @@ public class FunctionsImpl implements Functions {
         }
         else {
             user.setMoney(SurplusMoney);
-            String sql = "update user money=? where id = ?";
+            String sql = "update user set money=? where id = ?";
             try (
                     Connection c = connectionPool.getConnection();
                     PreparedStatement ps = c.prepareStatement(sql)
@@ -290,9 +290,9 @@ public class FunctionsImpl implements Functions {
             // ,固定"待发货"为order_value的order订单
             Date date = new Date(System.currentTimeMillis());
             String orderValue = "待发货";
-            String str1 = "insert into `order`(user_id,address_id,order_data,order_status) value(?,?,?,?)";
+            String str1 = "INSERT INTO `order` (user_id, address_id, order_data, order_status) VALUES (?, ?, ?, ?)";
             try (Connection c = connectionPool.getConnection();
-                 PreparedStatement ps = c.prepareStatement(sql)) {
+                 PreparedStatement ps = c.prepareStatement(str1)) {
                 ps.setInt(1, user.getUid());
                 ps.setInt(2, addressId);
                 ps.setDate(3, date);
