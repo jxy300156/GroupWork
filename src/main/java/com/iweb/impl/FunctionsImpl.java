@@ -77,7 +77,7 @@ public class FunctionsImpl implements Functions {
         int pageSize = 4;
 
         List<Product> products = getProducts();
-        products.sort(comparator);
+        Collections.sort(products,comparator);
         int totalPage = (int) Math.ceil((double) products.size() / pageSize);
         for(int i =0;i<totalPage;i++){
             int begin = i*pageSize;
@@ -120,9 +120,17 @@ public class FunctionsImpl implements Functions {
     private void addToCart(List<Product> cart,List<Product> products){
         System.out.println("请输入你想添加的商品");
         Scanner sc = new Scanner(System.in);
-        int prodIndex = sc.nextInt();
-        Product product = products.get(prodIndex);
-        cart.add(product);
+        if (sc.hasNextInt()) {
+            int prodIndex = sc.nextInt();
+            if (prodIndex >= 0 && prodIndex < products.size()) {
+                Product product = products.get(prodIndex);
+                cart.add(product);
+            } else {
+                System.out.println("无效的索引！");
+            }
+        } else {
+            System.out.println("无效的输入！");
+        }
     }
     @Override
     public void cartOperations(List<Product> cart) {
@@ -154,12 +162,21 @@ public class FunctionsImpl implements Functions {
         }
     }
     private void removeProduct(List<Product> cart,int prodIndex){
-        Product product = cart.get(prodIndex);
-        cart.remove(product);
+        if (prodIndex >= 0 && prodIndex < cart.size()) {
+            cart.remove(prodIndex);
+            System.out.println("商品已成功移除");
+        } else {
+            System.out.println("无效的索引！");
+        }
     }
     private void displayCart(List<Product> cart){
-        for(Product product:cart){
-            System.out.println(product.getPid()+"--"+product.getPName()+"--"+product.getPromotePrice());
+        if (cart.isEmpty()) {
+            System.out.println("购物车为空");
+        } else {
+            System.out.println("购物车内容：");
+            for (Product product : cart) {
+                System.out.println(product.getPid() + "--" + product.getPName() + "--" + product.getPromotePrice());
+            }
         }
     }
     @Override
