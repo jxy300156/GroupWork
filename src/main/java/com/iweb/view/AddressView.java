@@ -30,7 +30,7 @@ public class AddressView {
         int res = Integer.parseInt(choose);
         for (Address a: addressList) {
             if(a.getAddrId()==res){
-                System.out.println("获取成功 ");
+                System.out.println("获取成功");
                 return res;
             }
         }
