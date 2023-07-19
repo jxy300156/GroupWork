@@ -43,6 +43,7 @@ public class FunctionsImpl implements Functions {
         displayProducts(pagedProducts.get(pageIndex));
         // 创建一个购物车并添加商品
         List<Product> cart = new ArrayList<>();
+        System.out.println("请输入你想添加到购物车的商品所在显示行数");
         addToCart(cart,pagedProducts.get(pageIndex));
         return cart;
 
@@ -112,8 +113,8 @@ public class FunctionsImpl implements Functions {
 
     private void displayProducts(List<Product> products){
         for(Product product:products){
-            System.out.println(product.getPid() + "--" + product.getPName() + "--"+ product.getOriginalPrice()
-                    + "--" +product.getPromotePrice());
+            System.out.println(products.indexOf(product)+"--"+product.getPid() + "--" + product.getPName()
+                    + "--"+ product.getOriginalPrice() + "--" +product.getPromotePrice());
         }
     }
     private void addToCart(List<Product> cart,List<Product> products){
@@ -124,27 +125,30 @@ public class FunctionsImpl implements Functions {
         cart.add(product);
     }
     @Override
-    public void cartOperations(Integer cartId, int choice) {
-        Comparator<Product> comparator = getComparator();
-        List<Product> cart = shoppingMethod();
+    public void cartOperations(List<Product> cart) {
         System.out.println("请选择即将进行的操作：");
         System.out.println("1. 添加商品");
-        System.out.println("2. 移除商品");
-        System.out.println("3. 查看购物车");
+        System.out.println("2. 查看购物车");
+        System.out.println("3. 移除商品");
         Scanner sc = new Scanner(System.in);
+        int choice = sc.nextInt();
         switch (choice){
             case 1:
+                Comparator<Product> comparator = getComparator();
                 HashMap<Integer,List<Product>> pagedProducts = commodityChoose(comparator);
                 System.out.println("请输入你想查询的页码");
                 int pageIndex = sc.nextInt();
                 displayProducts(pagedProducts.get(pageIndex));
                 addToCart(cart,pagedProducts.get(pageIndex));
+                break;
             case 2:
+                displayCart(cart);
+                break;
+            case 3:
                 System.out.println("请输入你想删除的商品id");
                 int prodIndex = sc.nextInt();
                 removeProduct(cart,prodIndex);
-            case 3:
-                displayCart(cart);
+                break;
             default:
                 System.out.println("选项有误！");
         }

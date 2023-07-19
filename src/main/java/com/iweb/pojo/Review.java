@@ -17,4 +17,11 @@ public class Review {
     private Product product;
     private int rating;
     private String comment;
+
+    public Review(User user, Product product, int rating, String comment) {
+        this.user = user;
+        this.product = product;
+        this.rating = rating;
+        this.comment = comment;
+    }
 }

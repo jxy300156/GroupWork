@@ -17,4 +17,10 @@ public class OrderDetail {
     private Order order;
     private Product product;
     private int quantity;
+
+    public OrderDetail(Order order, Product product, int quantity) {
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+    }
 }
