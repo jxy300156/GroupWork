@@ -194,7 +194,7 @@ public class FunctionsImpl implements Functions {
         //.订单查看和订单关联的订单项数据显示,包括了 购买的商品名称 购买的商品数量 以及单价和总价
         String sql =
                 "SELECT o.`order_id` AS order_id, u.username, a.province_addr, a.city_addr, a.detail_addr, \n" +
-                        "       p.name AS product_name, od.quantity, p.promoteprice AS unit_price, \n" +
+                        "       p.name AS product_name,p.id AS pid,od.quantity, p.promoteprice AS unit_price, \n" +
                         "       (od.quantity * p.promoteprice) AS total_price\n" +
                         "FROM `order` o\n" +
                         "JOIN order_detail od ON o.`order_id` = od.oid\n" +
@@ -204,7 +204,7 @@ public class FunctionsImpl implements Functions {
                         "  SELECT id, username\n" +
                         "  FROM `user`\n" +
                         ") u ON o.`user_id` = u.id\n" +
-                        "WHERE o.id =?";
+                        "WHERE o.`order_id` =?";
         try (
                 Connection c = connectionPool.getConnection();
                 PreparedStatement ps = c.prepareStatement(sql);
@@ -229,6 +229,7 @@ public class FunctionsImpl implements Functions {
                 System.out.print("用户名: " + username+"   |"+"\t");
                 System.out.print("用户地址: " + provinceAddr+cityAddr+ detailAddr+" |"+"\t");
                 System.out.print("商品名称: " + productName+"   |"+"\t");
+                productPropertyAndValue(rs.getInt("pid"));
                 System.out.print("购买数量: " + quantity+"  |"+"\t");
                 System.out.print("单价: " + unitPrice+"   |"+"\t");
                 System.out.print("总价: " + totalPrice+"  |"+"\n");
@@ -238,6 +239,26 @@ public class FunctionsImpl implements Functions {
             e.printStackTrace();
         }
 
+    }
+    //根据传入的订单id找到对应的订单
+    //展示商品属性以及属性值
+    private void productPropertyAndValue(int pid){
+        String sql ="SELECT * FROM `property` pt \n" +
+                "JOIN `propertyvalue` pv ON pt.`id`= pv.`ptid`\n" +
+                "WHERE pid =?";
+        try(
+                Connection c = connectionPool.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+        ){
+            ps.setInt(1,pid);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                System.out.print("商品属性："+rs.getString("name")+"   |" + "\t");
+                System.out.print("对应属性参数: " + rs.getString("value") + "   |" + "\t");
+            }
+        }catch (Exception e){
+
+        }
     }
     @Override
     public int manageAddress() {
