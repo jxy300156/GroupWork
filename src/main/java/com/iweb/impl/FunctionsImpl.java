@@ -1,12 +1,14 @@
 package com.iweb.impl;
 
 import com.iweb.Inter.Functions;
+import com.iweb.client.Client;
 import com.iweb.dao.AddressDaoImpl;
 import com.iweb.pojo.Address;
 import com.iweb.pojo.Order;
 import com.iweb.pojo.Product;
 import com.iweb.pojo.User;
 import com.iweb.pool.ConnectionPool;
+import com.iweb.server.Server;
 import com.iweb.util.CommandCompare;
 import com.iweb.util.ReviewCompare;
 import com.iweb.util.SaleCompare;
@@ -325,7 +327,10 @@ public class FunctionsImpl implements Functions {
     }
 
     @Override
-    public void customerService(String host, int port) {
-
+    public void customerService() {
+        Thread server = new Server();
+        Thread client = new Client();
+        server.start();
+        client.start();
     }
 }

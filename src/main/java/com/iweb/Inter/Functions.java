@@ -50,8 +50,6 @@ public interface Functions {
 
     /** 使用BIO和socket编程 实现与智能客服通信 方法实现中选择调用两个方法
      * 一个实现服务器端的ServerSocket通信，另一个实现客户端的Socket通信
-     * @param host 作为客户端通信时的服务器地址
-     * @param port 作为客户端与服务器端通信的端口号
      */
-    void customerService(String host,int port);
+    void customerService();
 }
